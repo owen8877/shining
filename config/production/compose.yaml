@@ -1,0 +1,6 @@
+services:
+  main:
+    image: xdroid173/shining:smoke
+    container_name: production
+    env_file:
+      - .env

@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "@types/node-telegram-bot-api": "^0.64.2",
+    "node-telegram-bot-api": "^0.64.0"
+  },
+  "name": "shining",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.0.2"
+  },
+  "scripts": {
+    "local": "docker context use default && docker compose -f config/test/compose.yaml up -d",
+    "local-stop": "docker context use default && docker compose -f config/test/compose.yaml down",
+    "remote-deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

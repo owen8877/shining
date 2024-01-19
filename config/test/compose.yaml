@@ -1,0 +1,6 @@
+services:
+  main:
+    image: xdroid173/shining:smoke
+    container_name: test
+    env_file:
+      - .env
