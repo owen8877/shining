@@ -1,0 +1,8 @@
+#!/bin/sh
+
+source ./config/postgres/.env
+echo $DATABASE_URL
+DATABASE_URL=$DATABASE_URL bunx prisma migrate dev --name init
+
+docker context use default
+docker compose -f config/test/compose.yaml up -d

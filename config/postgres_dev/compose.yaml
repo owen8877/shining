@@ -1,0 +1,16 @@
+networks:
+  postgres_dev_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - $POSTGRES_PORT:5432
+    volumes:
+      - $DEV_DB_DIR:/var/lib/postgresql/data
+    env_file:
+      - .env
+    container_name: postgres-dev
+    networks:
+      - postgres_dev_network

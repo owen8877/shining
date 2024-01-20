@@ -1,0 +1,5 @@
+#!/bin/sh
+
+source ./config/postgres_dev/.env
+echo $DATABASE_URL
+DATABASE_URL=$DATABASE_URL bunx prisma migrate dev --name init
