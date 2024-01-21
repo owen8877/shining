@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { parse_link, ParseFailError } from "./leetcode";
+import { parse_link } from "./leetcode";
 
 function get_random_string(length: number): string {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -57,9 +57,12 @@ test.each(parse_link_cases)('parse link using %p, %p, %p/%p/%p, expecting %p', (
     } else {
       throw new Error('Should have failed on a bad case!');
     }
-  } catch (e: ParseFailError) {
+  } catch (e) {
     if (good_case) {
       throw new Error('Should not fail on a good case!');
     }
   }
 })
+
+// Test `determine_if_duplicate`
+test.todo(`determine_if_duplicate`)

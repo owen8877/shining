@@ -1,3 +1,5 @@
+import { PrismaClient } from '@prisma/client'
+
 export class ParseFailError extends Error {
   constructor(message: string) {
     super(message);
@@ -5,7 +7,15 @@ export class ParseFailError extends Error {
   }
 }
 
-export function parse_link(link: string): { problem_name: string, submission_id: number, year: number, month: number, day: number } {
+export interface LeetcodeSubmissionBean {
+  problem_name: string;
+  submission_id: number;
+  year: number;
+  month: number;
+  day: number;
+}
+
+export function parse_link(link: string): LeetcodeSubmissionBean {
   const regex = /\/problems\/([^\/]+)\/submissions\/(\d+)\/\?.*envId=(\d{4})-(\d{2})-(\d{2})/;
 
   const match = link.match(regex);
@@ -19,6 +29,18 @@ export function parse_link(link: string): { problem_name: string, submission_id:
 
     return { problem_name, submission_id, year, month, day };
   } else {
-    throw new ParseFailError(`Argument ${link} cannot be parsed!`);
+    throw new ParseFailError(`Argument ${link} cannot be parsed.`);
+  }
+}
+
+export async function insert_if_no_duplicate(prisma: PrismaClient, submission: LeetcodeSubmissionBean): Promise<boolean> {
+  // return true if there is no duplicate
+  const collision = await prisma.leetcodeSubmission.findFirst({ where: submission });
+  if (collision) {
+    return false;
+  } else {
+    // can safely insert
+    const b_record = await prisma.leetcodeSubmission.create({ data: submission });
+    return true;
   }
 }

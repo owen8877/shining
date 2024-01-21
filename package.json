@@ -9,16 +9,15 @@
   "type": "module",
   "devDependencies": {
     "@types/bun": "^1.0.2",
-    "@types/node-telegram-bot-api": "^0.64.2",
-    "ts-node": "^10.9.2"
+    "@types/node-telegram-bot-api": "^0.64.2"
   },
   "scripts": {
     "migrate-dev": "bin/migrate_dev",
     "postgres-dev": "docker context use default && docker compose -f config/postgres_dev/compose.yaml up -d",
     "dev": "bun --env-file=config/postgres_dev/.env --env-file=config/dev/.env index.ts",
-    "dev-docker": "docker context use default && docker compose -f config/test/compose.yaml up -d",
-    "dev-docker-stop": "docker context use default && docker compose -f config/test/compose.yaml down",
-    "remote-deploy": "todo && docker context use remote && docker compose -f config/production/compose.yaml up -d",
+    "dev-docker": "docker context use default && docker compose -f config/dev/compose.yaml up -d --build",
+    "dev-docker-stop": "docker context use default && docker compose -f config/dev/compose.yaml down",
+    "remote-deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d",
     "prod-entry": "bin/prod_entry"
   },
   "peerDependencies": {

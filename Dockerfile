@@ -1,9 +1,19 @@
 # syntax=docker/dockerfile:1
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1-alpine as base
-RUN apk add nodejs
+FROM oven/bun:debian as base
 WORKDIR /usr/src/app
+
+# For alpine
+# RUN apk add nodejs  
+
+# For debain
+RUN apt-get -y update; apt-get -y install curl
+ARG NODE_VERSION=21
+RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n \
+  && bash n $NODE_VERSION \
+  && rm n \
+  && npm install -g n
 
 # install dependencies into temp directory
 # this will cache them and speed up future builds
