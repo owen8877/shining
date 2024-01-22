@@ -17,7 +17,7 @@
     "dev": "bun --env-file=config/postgres_dev/.env --env-file=config/dev/.env index.ts",
     "dev-docker": "docker context use default && docker compose -f config/dev/compose.yaml up -d --build",
     "dev-docker-stop": "docker context use default && docker compose -f config/dev/compose.yaml down",
-    "remote-deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d",
+    "remote-deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d --build",
     "prod-entry": "bin/prod_entry"
   },
   "peerDependencies": {

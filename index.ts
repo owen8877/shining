@@ -20,8 +20,8 @@ bot.onText(/\/start/, async (msg: Message) => {
 // handles leetcode submission links
 bot.onText(/leetcode\.com/, async (msg: Message) => {
   const chatId = msg.chat.id;
-  const b = parse_link(msg.text ?? '');
   try {
+    const b = parse_link(msg.text ?? '');
     const no_duplicate = await insert_if_no_duplicate(prisma, b);
     if (no_duplicate) {
       const reply = `Thanks for the submission, `
@@ -46,7 +46,7 @@ bot.onText(/\/stat/, async (msg: Message) => {
 
 bot.onText(/\/drop_everything/, async (msg: Message) => {
   const send = await bot.sendMessage(msg.chat.id, `Are you sure to drop all data?`);
-  await bot.onReplyToMessage(send.chat.id, send.message_id, async (reply_msg: Message) => {
+  bot.onReplyToMessage(send.chat.id, send.message_id, async (reply_msg: Message) => {
     if (reply_msg.text === 'yes') {
       await prisma.leetcodeSubmission.deleteMany({});
       await bot.sendMessage(reply_msg.chat.id, 'All cleaned up!');

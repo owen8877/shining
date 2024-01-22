@@ -1,35 +1,25 @@
 import { expect, test } from "bun:test";
-import { parse_link } from "./leetcode";
-
-function get_random_string(length: number): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let randomString = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    randomString += characters.charAt(randomIndex);
-  }
-  return randomString;
-}
-
+import { ParseFailError, parse_link } from "./leetcode";
+import { get_random_int, get_random_string, py_range } from "./test_util";
 
 function generate_good_cases(n: number) {
-  return [...Array(n).keys()].map(() => [
+  return py_range(n).map(() => [
     get_random_string(15),  // problem_name
-    Math.floor(Math.random() * 1000),  // submission_id
-    Math.floor(Math.random() * 4) + 2019,  // year
-    Math.floor(Math.random() * 11) + 1,  // month
-    Math.floor(Math.random() * 28) + 1,  // day
+    get_random_int(1000),  // submission_id
+    get_random_int(2019, 2023),  // year
+    get_random_int(1, 13),  // month
+    get_random_int(1, 29),  // day
     true,  // good_case
   ]);
 }
 
 function generate_bad_cases(n: number) {
-  return [...Array(n).keys()].map(() => [
+  return py_range(n).map(() => [
     '',  // problem_name
-    Math.floor(Math.random() * 1000),  // submission_id
-    Math.floor(Math.random() * 4) + 2019,  // year
-    Math.floor(Math.random() * 11) + 1,  // month
-    Math.floor(Math.random() * 28) + 1,  // day
+    get_random_int(1000),  // submission_id
+    get_random_int(2019, 2023),  // year
+    get_random_int(1, 13),  // month
+    get_random_int(1, 29),  // day
     false,  // good_case
   ]);
 }
@@ -59,10 +49,51 @@ test.each(parse_link_cases)('parse link using %p, %p, %p/%p/%p, expecting %p', (
     }
   } catch (e) {
     if (good_case) {
-      throw new Error('Should not fail on a good case!');
+      throw new Error(`Should not fail on a good case! Look at error ${e}.`);
+    }
+    if (!good_case && !(e instanceof ParseFailError)) {
+      throw new Error(`Unknown error occured in a bad case: ${e}.`)
+    }
+  }
+})
+
+test.each(parse_link_cases)('parse link using %p, %p but date (%p/%p/%p) explicitly determined, expecting %p', (problem_name, submission_id, year, month, day, good_case) => {
+  // TODO: bun test runner does not support date change at the moment, skipping
+  return
+
+  const preset = { problem_name, submission_id, year, month, day };
+
+  setSystemTime(new Date(year as number, month as number - 1, day as number,
+    get_random_int(1, 24), get_random_int(60), get_random_int(60)));
+
+  const link = `https://leetcode.com/problems/${problem_name}`
+    + `/submissions/${submission_id}`
+    + `/?lang=python`;
+
+  try {
+    const parsed = parse_link(link);
+    if (good_case) {
+      expect(preset.problem_name).toBe(parsed.problem_name);
+      expect(preset.submission_id).toBe(parsed.submission_id);
+      expect(preset.year).toBe(parsed.year);
+      expect(preset.month).toBe(parsed.month);
+      expect(preset.day).toBe(parsed.day);
+    } else {
+      throw new Error('Should have failed on a bad case!');
+    }
+  } catch (e) {
+    if (good_case) {
+      throw new Error(`Should not fail on a good case! Look at error ${e}.`);
+    }
+    if (!good_case && !(e instanceof ParseFailError)) {
+      throw new Error(`Unknown error occured in a bad case: ${e}.`)
     }
   }
 })
 
 // Test `determine_if_duplicate`
 test.todo(`determine_if_duplicate`)
+
+function setSystemTime(arg0: Date) {
+  throw new Error("Function not implemented.");
+}
