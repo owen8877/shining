@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../blog-src"
+		}
+	],
+	"settings": {
+		"files.autoSave": "onFocusChange",
+		"vs-code-prettier-eslint.prettierLast": "true"
+	}
+}
