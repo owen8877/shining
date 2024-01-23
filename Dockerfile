@@ -32,12 +32,17 @@ RUN cd /temp/prod && bun install --frozen-lockfile --production
 # copy node_modules from temp directory
 # then copy all (non-ignored) project files into the image
 FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
-COPY . .
+COPY --from=install --chown=bun /temp/dev/node_modules node_modules
+COPY --chown=bun . .
 
 # [optional] tests & build
-ENV NODE_ENV=production
+# FROM prerelease AS test
+ENV NODE_ENV=production NO_DATABASE=1
+# USER bun
+RUN bunx prisma generate
 RUN bun test
+# RUN bun test:prod:entry
+# USER root
 
 # copy production dependencies and source code into final image
 FROM base AS release
@@ -52,4 +57,4 @@ COPY --from=prerelease --chown=bun /usr/src/app/bin bin
 # run the app
 USER bun
 
-ENTRYPOINT [ "bun", "prod-entry" ]
+ENTRYPOINT [ "bun", "prod:entry" ]

@@ -20,3 +20,11 @@ Make sure that the `.env.production` file contains `TELEGRAM_BOT_TOKEN=...`, the
 docker context create remote --docker "host=ssh://username@host"  # Add docker remote context
 bun remote-deploy
 ```
+
+## Troubleshooting
+### Cannot connect to database in local testing
+Make sure that the `.env.test` file includes
+```sh
+$ cat .env.test 
+DATABASE_URL="postgresql:..."
+```

@@ -3,11 +3,9 @@
 import { test, expect, spyOn } from 'bun:test';
 import { load_env_file } from './env';
 import * as env_module from './env';
-import { get_random_int, get_random_string, py_range } from './test_util';
+import { get_random_int, get_random_string, py_range } from '.';
 
-test('a random .env file can loaded correctly', async () => {
-  return;
-
+test.skip('a random .env file can loaded correctly', async () => {
   const n_lines = get_random_int(10) + 1;
   const random_env_list = py_range(n_lines)
     .map((_) => [get_random_string(4).toUpperCase(), get_random_string(10).toLowerCase()]);

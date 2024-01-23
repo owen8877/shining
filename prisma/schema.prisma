@@ -18,3 +18,11 @@ model LeetcodeSubmission {
   month         Int     @default(1)
   day           Int     @default(1)
 }
+
+model LeetcodeQuestion {
+  year          Int     @default(2024)
+  month         Int     @default(1)
+  day           Int     @default(1)
+  frontend_id   Int     @id @default(1)
+  problem_name  String  @default("")
+}

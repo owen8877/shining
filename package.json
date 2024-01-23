@@ -1,8 +1,8 @@
 {
   "dependencies": {
+    "@prisma/client": "^5.8.1",
     "node-telegram-bot-api": "^0.64.0",
-    "prisma": "^5.8.1",
-    "@prisma/client": "^5.8.1"
+    "prisma": "^5.8.1"
   },
   "name": "shining",
   "module": "index.ts",
@@ -12,13 +12,16 @@
     "@types/node-telegram-bot-api": "^0.64.2"
   },
   "scripts": {
-    "migrate-dev": "bin/migrate_dev",
-    "postgres-dev": "docker context use default && docker compose -f config/postgres_dev/compose.yaml up -d",
+    "check:dockerignore": "rsync -avn . /dev/shm --exclude-from .dockerignore | less",
+    "test:dev": "bun dev:postgres && bun test",
+    "test:prod": "bunx prisma generate && bun test",
+    "dev:migrate": "bin/migrate_dev",
+    "dev:postgres": "docker context use default && docker compose -f config/postgres_dev/compose.yaml up -d",
     "dev": "bun --env-file=config/postgres_dev/.env --env-file=config/dev/.env index.ts",
-    "dev-docker": "docker context use default && docker compose -f config/dev/compose.yaml up -d --build",
-    "dev-docker-stop": "docker context use default && docker compose -f config/dev/compose.yaml down",
-    "remote-deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d --build",
-    "prod-entry": "bin/prod_entry"
+    "dev:docker": "docker context use default && docker compose -f config/dev/compose.yaml up -d --build",
+    "dev:docker:stop": "docker context use default && docker compose -f config/dev/compose.yaml down",
+    "deploy": "docker context use remote && docker compose -f config/production/compose.yaml up -d --build",
+    "prod:entry": "bin/prod_entry"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

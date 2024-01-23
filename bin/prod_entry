@@ -1,11 +1,6 @@
 #!/bin/sh
 
 bunx prisma generate
-source ./config/postgres/.env
-echo $DATABASE_URL
-if [ -z $DATABASE_URL ]; then
-  exit 1
-fi
-DATABASE_URL=$DATABASE_URL bunx prisma migrate deploy
-DATABASE_URL=$DATABASE_URL bunx prisma migrate status
+bunx prisma migrate deploy
+# bunx prisma migrate status
 bun run index.ts

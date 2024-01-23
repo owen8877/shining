@@ -3,7 +3,8 @@ import type { Message } from 'node-telegram-bot-api';
 
 import { PrismaClient } from '@prisma/client'
 
-import { insert_if_no_duplicate, parse_link } from './lib/leetcode';
+import { module as leetcode_module } from './lib/leetcode/index';
+import { Stream } from './lib/util/stream';
 
 const prisma = new PrismaClient();
 
@@ -18,22 +19,19 @@ bot.onText(/\/start/, async (msg: Message) => {
 });
 
 // handles leetcode submission links
-bot.onText(/leetcode\.com/, async (msg: Message) => {
-  const chatId = msg.chat.id;
+bot.onText(leetcode_module.filter_regex, async (msg: Message) => {
+  const stream = new Stream(bot, msg);
   try {
-    const b = parse_link(msg.text ?? '');
-    const no_duplicate = await insert_if_no_duplicate(prisma, b);
-    if (no_duplicate) {
-      const reply = `Thanks for the submission, `
-        + `You did *${b.problem_name}* on ${b.year}/${b.month}/${b.day} with `
-        + `submission id _${b.submission_id}_,`;
-      await bot.sendMessage(chatId, reply, { parse_mode: "Markdown" });
-    } else {
-      await bot.sendMessage(chatId, 'Oops! Looks like we have added this submission before.')
-    }
+    await leetcode_module.entry_point(prisma, stream, msg);
   } catch (e) {
-    await bot.sendMessage(chatId, `You seem to pass a link to the leetcode website, but the following error occurred when I tried to parse this message:\n\n${e}\n\nPlease let Owen know about this.`)
+    stream.append(
+      `The input seems to be ${leetcode_module.input}, `
+      + `but the following error occurred during handling it:`
+      + `\n\n${e}\n\n`
+      + `Please let Owen know about this.`
+    );
   }
+  await stream.fire();
 });
 
 bot.onText(/\/stat/, async (msg: Message) => {

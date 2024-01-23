@@ -1,4 +1,7 @@
 {
+  /* Project specific */
+  "exclude": [".env.test"],
+
   "compilerOptions": {
     "lib": [
       "ESNext"

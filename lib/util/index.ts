@@ -33,3 +33,10 @@ export function py_range(arg1: number, arg2?: number): number[] {
     return [...Array(len).keys()].map(x => x + start);
   }
 }
+
+export function has_database(): boolean {
+  if (process.env.NO_DATABASE) {
+    return false;
+  }
+  return true
+}
