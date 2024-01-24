@@ -12,6 +12,7 @@
     "@types/node-telegram-bot-api": "^0.64.2"
   },
   "scripts": {
+    "init:check": "bin/init_check",
     "check:dockerignore": "rsync -avn . /dev/shm --exclude-from .dockerignore | less",
     "test:dev": "bun dev:postgres && bun test",
     "test:prod": "bunx prisma generate && bun test",

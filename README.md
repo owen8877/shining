@@ -9,6 +9,7 @@ Welcome to my little cute event tracking bot!
 - Docker
 
 **Bun scripts** 
+- `init:check`: check all stupid settings and tell you what might go wrong
 - `check:dockerignore`: worry-free check what files are not included in docker,
 - `test:dev`: if you want to run a test in dev (not in docker)
 - `test:prod`: only used by docker daemon and no human being uses this
@@ -43,3 +44,6 @@ Make sure that the `.env.test` file includes
 $ cat .env.test 
 DATABASE_URL="postgresql:..."
 ```
+
+### My application does not connect to postgres in another container
+Just run `bun dev:docker` again and it will resolve once the database has been initialized.

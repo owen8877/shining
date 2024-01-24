@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "Cheking bun..."
+bun -v|| (echo 'Use `npm i -g bun` to install bun!'; exit 1)
+bun i --frozen-lockfile
+echo
+
+echo "Checking docker..."
+docker -v || (echo 'No docker?!'; exit 1)
+echo
+
+echo "Checking .env files..."
+[ -f config/dev/.env ] || (touch config/dev/.env; echo 'Please write `config/dev/.env`.'; exit 1)
+[ -f config/postgres/.env ] || (mkdir config/postgres; touch config/postgres/.env; echo 'Please write `config/postgres/.env`.'; exit 1)
+[ -f config/postgres_dev/.env ] || (touch config/postgres_dev/.env; echo 'Please write `config/postgres_dev/.env`.'; exit 1)
+[ -f config/production/.env ] || (touch config/production/.env; echo 'Please write `config/production/.env`.'; exit 1)
+[ -f .env.test ] || (touch .env.test; echo 'Please write `.env.test`.'; exit 1)
+
+(_P=`pwd`; [ ! -z `grep $_P config/dev/.env` ]) || (echo 'Revise `config/dev/.env` so that it points to current working directory.'; exit 1)
+(_P=`pwd`; [ ! -z `grep $_P config/postgres_dev/.env` ]) || (echo 'Revise `config/postgres_dev/.env` so that it points to current working directory.'; exit 1)
+(_P=`pwd`; [ -z `grep $_P config/production/.env` ]) || (echo 'The `config/production/.env` probably should not in the current working directory.'; exit 1)
