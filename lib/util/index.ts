@@ -1,3 +1,7 @@
+import type { PrismaClient } from "@prisma/client";
+import type { Stream } from "./stream";
+import type { Message } from "node-telegram-bot-api";
+
 export function get_random_string(length: number): string {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomString = '';
@@ -39,4 +43,24 @@ export function has_database(): boolean {
     return false;
   }
   return true
+}
+
+export interface BotModule {
+  input: string,
+  filter_regex: RegExp,
+  entry_point(prisma: PrismaClient, stream: Stream, msg: Message): Promise<void>,
+}
+
+export function get_year_month_day(date?: Date): {year: number, month: number, day: number} {
+  if (date === undefined) {
+    date = new Date();
+  }
+  const options = { timeZone: process.env.TZ ?? 'UTC' };
+  const year_str = new Intl.DateTimeFormat(undefined, { year: 'numeric', ...options }).format(date);
+  const month_str = new Intl.DateTimeFormat(undefined, { month: 'numeric', ...options }).format(date);
+  const day_str = new Intl.DateTimeFormat(undefined, { day: 'numeric', ...options }).format(date);
+  const year = parseInt(year_str) || 0;
+  const month = parseInt(month_str) || 0;
+  const day = parseInt(day_str) || 0;
+  return { year, month, day };
 }

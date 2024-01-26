@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import type { Stream } from '../util/stream';
 import type { Message } from 'node-telegram-bot-api';
 import { get_questions_or_fetch } from './question_backend';
+import type { BotModule } from '../util';
 
 export class ParseFailError extends Error {
   constructor(message: string) {
@@ -125,7 +126,7 @@ async function entry_point(prisma: PrismaClient, stream: Stream, msg: Message): 
   }
 }
 
-export const module = {
+export const module: BotModule = {
   input: 'a link to the leetcode website',
   filter_regex: /leetcode\.com/,
   entry_point,

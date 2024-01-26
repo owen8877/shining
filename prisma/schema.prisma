@@ -26,3 +26,11 @@ model LeetcodeQuestion {
   frontend_id   Int     @id @default(1)
   problem_name  String  @default("")
 }
+
+model StudyEntry {
+  id            Int     @id @default(autoincrement())
+  year          Int     @default(2024)
+  month         Int     @default(1)
+  day           Int     @default(1)
+  content       String  @default("")
+}
