@@ -34,3 +34,11 @@ model StudyEntry {
   day           Int     @default(1)
   content       String  @default("")
 }
+
+model ProblemSetEntry {
+  id            Int     @id @default(autoincrement())
+  year          Int     @default(2024)
+  month         Int     @default(1)
+  day           Int     @default(1)
+  content       String  @default("")
+}

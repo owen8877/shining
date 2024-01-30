@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Cheking bun..."
-bun -v|| (echo 'Use `npm i -g bun` to install bun!'; exit 1)
+bun -v || (echo 'Use `npm i -g bun` to install bun!'; exit 1)
 bun i --frozen-lockfile
 echo
 

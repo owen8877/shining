@@ -5,8 +5,8 @@ import { PrismaClient } from '@prisma/client'
 
 import { module as leetcode_module } from './lib/leetcode/index';
 import { module as study_module } from './lib/study/index';
+import { module as problem_set_module } from './lib/problem_set/index';
 import { Stream } from './lib/util/stream';
-import type { BotModule } from './lib/util';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ bot.onText(/\/start/, async (msg: Message) => {
   bot.sendMessage(chatId, 'Hello! I am your event-tracking bot.');
 });
 
-for (let m of [leetcode_module, study_module]) {
+for (let m of [leetcode_module, study_module, problem_set_module]) {
   bot.onText(m.filter_regex, async (msg: Message) => {
     const stream = new Stream(bot, msg);
     try {
@@ -40,12 +40,15 @@ for (let m of [leetcode_module, study_module]) {
 bot.onText(/\/stat/, async (msg: Message) => {
   const all_submissions = await prisma.leetcodeSubmission.findMany();  // TODO: migreate year/month/day to date
   const all_studies = await prisma.studyEntry.findMany();
+  const all_problem_sets = await prisma.problemSetEntry.findMany();
 
   await bot.sendMessage(msg.chat.id, `You have ${all_submissions.length} submissions recorded:\n`
     + all_submissions.map((b) => `*${b.problem_name}* on ${b.year}/${b.month}/${b.day} with `
       + `submission id _${b.submission_id}_;`).join('\n')
     + `\nAnd about study entries:\n`
-    + all_studies.map((b) => `*${b.content}* on ${b.year}/${b.month}/${b.day}`).join('\n'), { parse_mode: "Markdown" });
+    + all_studies.map((b) => `*${b.content}* on ${b.year}/${b.month}/${b.day}`).join('\n')
+    + `\nAnd about problem set entries:\n`
+    + all_problem_sets.map((b) => `*${b.content}* on ${b.year}/${b.month}/${b.day}`).join('\n'), { parse_mode: "Markdown" });
 });
 
 bot.onText(/\/drop_everything/, async (msg: Message) => {
