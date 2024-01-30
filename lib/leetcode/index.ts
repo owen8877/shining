@@ -100,7 +100,8 @@ export async function lookup_leetcode_date_based_on_problem_name(
         current_month += 12;
       }
     }
-    throw new Error(`Cannot find a leetcode question with name ${problem_bean.problem_name} within the past month!`);
+    // throw new Error(`Cannot find a leetcode question with name ${problem_bean.problem_name} within the past month!`);
+    return { year, month, day };
   } else {
     return date_bean;
   }
