@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import type { Stream } from '../util/stream';
 import type { Message } from 'node-telegram-bot-api';
 import { get_questions_or_fetch } from './question_backend';
-import type { BotModule } from '../util';
+import { get_year_month_day, type BotModule } from '../util';
 
 export class ParseFailError extends Error {
   constructor(message: string) {
@@ -75,14 +75,21 @@ export async function lookup_leetcode_date_based_on_problem_name(
   if (date_bean === undefined) {
     // The date information cannot be inferred from the url; we must trace back and find the correct one.
 
+    const { year, month, day } = get_year_month_day();
     let [retry, current_year, current_month] = [0, (new Date()).getFullYear(), (new Date()).getMonth() + 1];
-    const MAX_RETRY = 12;
+    const MAX_RETRY = 1;  // 1 for past month and 12 for past year
+    const DETERMINE_WINDOW = 3;  // max number of days to run this detection
     while (retry < MAX_RETRY) {
       // Try to find the problem in a previous month, within a year
       const questions = await get_questions_or_fetch(prisma, current_year, current_month);
       const question_of_interest = questions.find(question => question.problem_name == problem_bean.problem_name);
       if (question_of_interest) {
-        return { year: current_year, month: current_month, day: question_of_interest.day };
+        const iday = question_of_interest.day;
+        if (iday < day - DETERMINE_WINDOW) {
+          return { year, month, day };
+        } else {
+          return { year: current_year, month: current_month, day: iday };
+        }
       }
 
       // Didn't find the desired problem
@@ -93,7 +100,7 @@ export async function lookup_leetcode_date_based_on_problem_name(
         current_month += 12;
       }
     }
-    throw new Error(`Cannot find a leetcode question with name ${problem_bean.problem_name} within the past year!`);
+    throw new Error(`Cannot find a leetcode question with name ${problem_bean.problem_name} within the past month!`);
   } else {
     return date_bean;
   }
